@@ -1,12 +1,12 @@
 package com.ayakimenko.com.tools;
 
-import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.enemis.Enemy;
 import com.ayakimenko.com.sprites.enemis.Goomba;
 import com.ayakimenko.com.sprites.enemis.Turtle;
 import com.ayakimenko.com.sprites.objects.Brick;
 import com.ayakimenko.com.sprites.objects.Coin;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -35,11 +35,11 @@ public class B2WorldCreator {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM, (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM);
+            bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / Constants.PPM, (rect.getY() + rect.getHeight() / 2) / Constants.PPM);
 
             body = world.createBody(bodyDef);
 
-            shape.setAsBox(rect.getWidth() / 2 / MarioBros.PPM, rect.getHeight() / 2 / MarioBros.PPM);
+            shape.setAsBox(rect.getWidth() / 2 / Constants.PPM, rect.getHeight() / 2 / Constants.PPM);
             fixtureDef.shape = shape;
             body.createFixture(fixtureDef);
         }
@@ -49,13 +49,13 @@ public class B2WorldCreator {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM, (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM);
+            bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / Constants.PPM, (rect.getY() + rect.getHeight() / 2) / Constants.PPM);
 
             body = world.createBody(bodyDef);
 
-            shape.setAsBox(rect.getWidth() / 2 / MarioBros.PPM, rect.getHeight() / 2 / MarioBros.PPM);
+            shape.setAsBox(rect.getWidth() / 2 / Constants.PPM, rect.getHeight() / 2 / Constants.PPM);
             fixtureDef.shape = shape;
-            fixtureDef.filter.categoryBits = MarioBros.OBJECT_BIT;
+            fixtureDef.filter.categoryBits = Constants.OBJECT_BIT;
             body.createFixture(fixtureDef);
         }
 
@@ -75,14 +75,14 @@ public class B2WorldCreator {
         goombas = new Array<Goomba>();
         for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            goombas.add(new Goomba(screen, rect.getX() / MarioBros.PPM, rect.getY() / MarioBros.PPM));
+            goombas.add(new Goomba(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
         }
 
         // create turtles
         turtles = new Array<Turtle>();
         for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            turtles.add(new Turtle(screen, rect.getX() / MarioBros.PPM, rect.getY() / MarioBros.PPM));
+            turtles.add(new Turtle(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
         }
     }
 

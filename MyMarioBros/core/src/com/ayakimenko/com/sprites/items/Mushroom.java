@@ -1,9 +1,9 @@
 package com.ayakimenko.com.sprites.items;
 
 
-import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -25,14 +25,14 @@ public class Mushroom extends Item {
 
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(6 / MarioBros.PPM);
+        shape.setRadius(6 / Constants.PPM);
 
-        fdef.filter.categoryBits = MarioBros.ITEM_BIT;
-        fdef.filter.maskBits = MarioBros.MARIO_BIT
-                | MarioBros.OBJECT_BIT
-                | MarioBros.GROUND_BIT
-                | MarioBros.COIN_BIT
-                | MarioBros.ENEMY_BIT;
+        fdef.filter.categoryBits = Constants.ITEM_BIT;
+        fdef.filter.maskBits = Constants.MARIO_BIT
+                | Constants.OBJECT_BIT
+                | Constants.GROUND_BIT
+                | Constants.COIN_BIT
+                | Constants.ENEMY_BIT;
 
         fdef.shape = shape;
 

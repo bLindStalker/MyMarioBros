@@ -1,8 +1,8 @@
 package com.ayakimenko.com.sprites.items;
 
-import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -28,7 +28,7 @@ public abstract class Item extends Sprite {
         destroyed = false;
 
         setPosition(x, y);
-        setBounds(getX(), getY(), 16 / MarioBros.PPM, 16 / MarioBros.PPM);
+        setBounds(getX(), getY(), 16 / Constants.PPM, 16 / Constants.PPM);
         defineItem();
     }
 

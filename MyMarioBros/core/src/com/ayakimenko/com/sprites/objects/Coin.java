@@ -7,6 +7,7 @@ import com.ayakimenko.com.sprites.Mario;
 import com.ayakimenko.com.sprites.items.ItemDef;
 import com.ayakimenko.com.sprites.items.Mushroom;
 import com.ayakimenko.com.tools.AssetLoader;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
@@ -23,7 +24,7 @@ public class Coin extends InteractiveTileObject {
         tileSet = map.getTileSets().getTileSet("tileset_gutter");
 
         fixture.setUserData(this);
-        setCategoryFilter(MarioBros.COIN_BIT);
+        setCategoryFilter(Constants.COIN_BIT);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class Coin extends InteractiveTileObject {
         } else {
 
             if (object.getProperties().containsKey("mushroom")) {
-                screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / MarioBros.PPM), Mushroom.class));
+                screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / Constants.PPM), Mushroom.class));
                 AssetLoader.manager.get("audio/sounds/powerup_spawn.wav", Sound.class).play();
             } else {
                 AssetLoader.manager.get("audio/sounds/coin.wav", Sound.class).play();

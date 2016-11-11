@@ -1,8 +1,8 @@
 package com.ayakimenko.com.sprites.enemis;
 
-import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -37,7 +37,7 @@ public class Turtle extends Enemy {
         walkAnimation = new Animation(0.2f, frames);
         currentState = previousState = State.WALKING;
 
-        setBounds(getX(), getY(), 16 / MarioBros.PPM, 24 / MarioBros.PPM);
+        setBounds(getX(), getY(), 16 / Constants.PPM, 24 / Constants.PPM);
     }
 
     @Override
@@ -49,24 +49,24 @@ public class Turtle extends Enemy {
 
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(6 / MarioBros.PPM);
-        fdef.filter.categoryBits = MarioBros.ENEMY_BIT;
-        fdef.filter.maskBits = MarioBros.GROUND_BIT | MarioBros.COIN_BIT | MarioBros.BRICK_BIT | MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT | MarioBros.MARIO_BIT;
+        shape.setRadius(6 / Constants.PPM);
+        fdef.filter.categoryBits = Constants.ENEMY_BIT;
+        fdef.filter.maskBits = Constants.GROUND_BIT | Constants.COIN_BIT | Constants.BRICK_BIT | Constants.ENEMY_BIT | Constants.OBJECT_BIT | Constants.MARIO_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
 
         PolygonShape head = new PolygonShape();
         Vector2[] vertice = new Vector2[4];
-        vertice[0] = new Vector2(-5, 8).scl(1 / MarioBros.PPM);
-        vertice[1] = new Vector2(5, 8).scl(1 / MarioBros.PPM);
-        vertice[2] = new Vector2(-3, 3).scl(1 / MarioBros.PPM);
-        vertice[3] = new Vector2(3, 3).scl(1 / MarioBros.PPM);
+        vertice[0] = new Vector2(-5, 8).scl(1 / Constants.PPM);
+        vertice[1] = new Vector2(5, 8).scl(1 / Constants.PPM);
+        vertice[2] = new Vector2(-3, 3).scl(1 / Constants.PPM);
+        vertice[3] = new Vector2(3, 3).scl(1 / Constants.PPM);
         head.set(vertice);
 
         fdef.shape = head;
         fdef.restitution = 1.5f;
-        fdef.filter.categoryBits = MarioBros.ENEMY_HEAD_BIT;
+        fdef.filter.categoryBits = Constants.ENEMY_HEAD_BIT;
         b2body.createFixture(fdef).setUserData(this);
     }
 
@@ -88,7 +88,7 @@ public class Turtle extends Enemy {
             velocity.x = 1;
         }
 
-        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - 8 / MarioBros.PPM);
+        setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - 8 / Constants.PPM);
         if (currentState == State.DEAD) {
             deadRotation += 3;
             rotate(deadRotation);
@@ -152,7 +152,7 @@ public class Turtle extends Enemy {
     public void killed() {
         currentState = State.DEAD;
         Filter filter = new Filter();
-        filter.maskBits = MarioBros.NOTHING_BIT;
+        filter.maskBits = Constants.NOTHING_BIT;
 
         for (Fixture fixture : b2body.getFixtureList()) {
             fixture.setFilterData(filter);

@@ -9,6 +9,7 @@ import com.ayakimenko.com.sprites.items.ItemDef;
 import com.ayakimenko.com.sprites.items.Mushroom;
 import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.B2WorldCreator;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.ayakimenko.com.tools.WorldContactListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -57,15 +58,18 @@ public class PlayScreen implements Screen {
     private LinkedBlockingQueue<ItemDef> itemToSpawn;
 
     public PlayScreen(MarioBros game) {
-        atlas = new TextureAtlas("Mario_and_Enemies.pack");
         this.game = game;
+
+        atlas = new TextureAtlas("Mario_and_Enemies.pack");
+
         gameCam = new OrthographicCamera();
-        gameViewport = new FitViewport(MarioBros.V_WIDTH / MarioBros.PPM, MarioBros.V_HEIGHT / MarioBros.PPM, gameCam);
-        hud = new Hud(game.batch);
+        gameViewport = new FitViewport(Constants.V_WIDTH / Constants.PPM, Constants.V_HEIGHT / Constants.PPM, gameCam);
+
+        hud = new Hud(game.getBatch());
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / MarioBros.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / Constants.PPM);
         gameCam.position.set(gameViewport.getWorldWidth() / 2, gameViewport.getWorldHeight() / 2, 0);
 
         world = new World(new Vector2(0, -10), true);
@@ -158,24 +162,24 @@ public class PlayScreen implements Screen {
 
         b2dr.render(world, gameCam.combined);
 
-        game.batch.setProjectionMatrix(gameCam.combined);
+        game.getBatch().setProjectionMatrix(gameCam.combined);
 
-        game.batch.begin();
-        player.draw(game.batch);
+        game.getBatch().begin();
+        player.draw(game.getBatch());
         for (Enemy enemy : creator.getEnemies()) {
-            enemy.draw(game.batch);
-            if (enemy.getX() < player.getX() + 224 / MarioBros.PPM) {
+            enemy.draw(game.getBatch());
+            if (enemy.getX() < player.getX() + 224 / Constants.PPM) {
                 enemy.b2body.setActive(true);
             }
         }
 
         for (Item item : items) {
-            item.draw(game.batch);
+            item.draw(game.getBatch());
         }
 
-        game.batch.end();
+        game.getBatch().end();
 
-        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        game.getBatch().setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
         if (gameOver()) {

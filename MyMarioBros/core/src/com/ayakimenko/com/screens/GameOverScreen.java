@@ -1,6 +1,7 @@
 package com.ayakimenko.com.screens;
 
 import com.ayakimenko.com.MarioBros;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -23,8 +24,8 @@ public class GameOverScreen implements Screen {
 
     public GameOverScreen(Game game) {
         this.game = game;
-        viewport = new FitViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, new OrthographicCamera());
-        stage = new Stage(viewport, ((MarioBros) game).batch);
+        viewport = new FitViewport(Constants.V_WIDTH, Constants.V_HEIGHT, new OrthographicCamera());
+        stage = new Stage(viewport, ((MarioBros) game).getBatch());
 
         Label.LabelStyle font = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
 
