@@ -4,6 +4,7 @@ import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.enemis.Enemy;
 import com.ayakimenko.com.sprites.enemis.Turtle;
+import com.ayakimenko.com.tools.AssetLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -22,24 +23,18 @@ import com.badlogic.gdx.utils.Array;
 
 public class Mario extends Sprite {
 
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD;}
-
     public State currentState;
+    public Body b2body;
     private State previusState;
     private World word;
-    public Body b2body;
-
     private TextureRegion marioStand;
-
     private Animation marioRun;
     private Animation bigMarioRun;
     private Animation growMario;
-
     private TextureRegion marioJump;
     private TextureRegion bigMarioStand;
     private TextureRegion bigMarioJump;
     private TextureRegion marioDead;
-
     private float stateTimer;
     private boolean timeToDefineMario;
     private boolean runningRight;
@@ -47,7 +42,6 @@ public class Mario extends Sprite {
     private boolean runnGrowAnimation;
     private boolean timeToDefineBigMario;
     private boolean marioIsDead;
-
     public Mario(PlayScreen playScreen) {
         super(playScreen.getAtlas().findRegion("little_mario"));
         this.word = playScreen.getWorld();
@@ -233,7 +227,7 @@ public class Mario extends Sprite {
         timeToDefineBigMario = true;
 
         setBounds(getX(), getY(), getWidth(), getHeight() * 2);
-        MarioBros.manager.get("audio/sounds/powerup.wav", Sound.class).play();
+        AssetLoader.manager.get("audio/sounds/powerup.wav", Sound.class).play();
     }
 
     public void redefineMario() {
@@ -281,10 +275,10 @@ public class Mario extends Sprite {
                 marioIsBig = false;
                 timeToDefineMario = true;
                 setBounds(getX(), getY(), getWidth(), getHeight() / 2);
-                MarioBros.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
+                AssetLoader.manager.get("audio/sounds/powerdown.wav", Sound.class).play();
             } else {
-                MarioBros.manager.get("audio/music/mario_music.ogg", Music.class).stop();
-                MarioBros.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
+                AssetLoader.manager.get("audio/music/mario_music.ogg", Music.class).stop();
+                AssetLoader.manager.get("audio/sounds/mariodie.wav", Sound.class).play();
 
                 marioIsDead = true;
                 Filter filter = new Filter();
@@ -310,4 +304,6 @@ public class Mario extends Sprite {
     public boolean isMarioIsBig() {
         return marioIsBig;
     }
+
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD;}
 }

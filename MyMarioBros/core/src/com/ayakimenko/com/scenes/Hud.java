@@ -17,19 +17,17 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 
 public class Hud implements Disposable {
-    public Stage stage;
-    private Viewport viewport;
-
-    private Integer worldTimer;
-    private float timeCount;
-    private static Integer score;
-
-    Label countDownLabel;
     static Label scoreLabel;
+    private static Integer score;
+    public Stage stage;
+    Label countDownLabel;
     Label timeLabel;
     Label levelLabel;
     Label worldLabel;
     Label marioLabel;
+    private Viewport viewport;
+    private Integer worldTimer;
+    private float timeCount;
 
     public Hud(SpriteBatch sb) {
         worldTimer = 300;
@@ -62,6 +60,11 @@ public class Hud implements Disposable {
         stage.addActor(table);
     }
 
+    public static void addScore(int value) {
+        score += value;
+        scoreLabel.setText(String.format("%06d", score));
+    }
+
     public void update(float dl) {
         timeCount += dl;
         if (timeCount >= 1) {
@@ -69,11 +72,6 @@ public class Hud implements Disposable {
             countDownLabel.setText(String.format("%03d", worldTimer));
             timeCount = 0;
         }
-    }
-
-    public static void addScore(int value) {
-        score += value;
-        scoreLabel.setText(String.format("%06d", score));
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -18,12 +17,8 @@ import com.badlogic.gdx.utils.Array;
 public class Turtle extends Enemy {
     public static final int KICK_LEFT_SPEED = -2;
     public static final int KICK_RIGHT_SPEED = 2;
-
-    public enum State {WALKING, MOVING_SHELL, STANDING_SHELL, DEAD}
-
     public State currentState;
     public State previousState;
-
     private float stateTime;
     private Animation walkAnimation;
     private Array<TextureRegion> frames;
@@ -31,8 +26,6 @@ public class Turtle extends Enemy {
     private boolean destroyed;
     private TextureRegion shell;
     private float deadRotation;
-
-
     public Turtle(PlayScreen screen, float x, float y) {
         super(screen, x, y);
 
@@ -171,4 +164,6 @@ public class Turtle extends Enemy {
     public State getCurrentState() {
         return currentState;
     }
+
+    public enum State {WALKING, MOVING_SHELL, STANDING_SHELL, DEAD}
 }

@@ -4,11 +4,9 @@ import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.InteractiveTileObject;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.AssetLoader;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.physics.box2d.World;
 
 import static com.ayakimenko.com.scenes.Hud.addScore;
 
@@ -22,13 +20,13 @@ public class Brick extends InteractiveTileObject {
 
     @Override
     public void onHeadHit(Mario mario) {
-        if (mario.isMarioIsBig()){
+        if (mario.isMarioIsBig()) {
             setCategoryFilter(MarioBros.DESTROYED_BIT);
             getCell().setTile(null);
             addScore(200);
-            MarioBros.manager.get("audio/sounds/breakblock.wav", Sound.class).play();
-        }else {
-            MarioBros.manager.get("audio/sounds/bump.wav", Sound.class).play();
+            AssetLoader.manager.get("audio/sounds/breakblock.wav", Sound.class).play();
+        } else {
+            AssetLoader.manager.get("audio/sounds/bump.wav", Sound.class).play();
         }
 
     }

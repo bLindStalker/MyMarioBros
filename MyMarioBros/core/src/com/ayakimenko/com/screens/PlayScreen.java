@@ -7,6 +7,7 @@ import com.ayakimenko.com.sprites.enemis.Enemy;
 import com.ayakimenko.com.sprites.items.Item;
 import com.ayakimenko.com.sprites.items.ItemDef;
 import com.ayakimenko.com.sprites.items.Mushroom;
+import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.B2WorldCreator;
 import com.ayakimenko.com.tools.WorldContactListener;
 import com.badlogic.gdx.Gdx;
@@ -76,7 +77,7 @@ public class PlayScreen implements Screen {
         player = new Mario(this);
 
         world.setContactListener(new WorldContactListener());
-        music = MarioBros.manager.get("audio/music/mario_music.ogg", Music.class);
+        music = AssetLoader.manager.get("audio/music/mario_music.ogg", Music.class);
         music.setLooping(true);
         music.setVolume(0.3f);
         music.play();
@@ -177,7 +178,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
-        if (gameOver()){
+        if (gameOver()) {
             game.setScreen(new GameOverScreen(game));
             dispose();
         }

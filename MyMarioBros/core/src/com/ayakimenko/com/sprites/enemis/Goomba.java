@@ -3,6 +3,7 @@ package com.ayakimenko.com.sprites.enemis;
 import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.AssetLoader;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -89,7 +90,7 @@ public class Goomba extends Enemy {
     @Override
     public void hitOnHead(Mario mario) {
         setToDestroy = true;
-        MarioBros.manager.get("audio/sounds/stomp.wav", Sound.class).play();
+        AssetLoader.manager.get("audio/sounds/stomp.wav", Sound.class).play();
     }
 
     @Override
