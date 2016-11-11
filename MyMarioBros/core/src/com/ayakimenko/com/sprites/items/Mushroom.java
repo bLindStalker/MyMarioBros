@@ -3,6 +3,7 @@ package com.ayakimenko.com.sprites.items;
 
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 public class Mushroom extends Item {
     public Mushroom(PlayScreen screen, float x, float y) {
         super(screen, x, y);
-        setRegion(screen.getAtlas().findRegion("mushroom"), 0, 0, 16, 16);
+        setRegion(AssetLoader.atlas.findRegion("mushroom"), 0, 0, 16, 16);
         velocity = new Vector2(0.7f, 0);
     }
 

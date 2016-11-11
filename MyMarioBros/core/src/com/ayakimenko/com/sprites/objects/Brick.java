@@ -7,13 +7,14 @@ import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.physics.box2d.World;
 
 import static com.ayakimenko.com.scenes.MainStage.addScore;
 
 public class Brick extends InteractiveTileObject {
 
-    public Brick(PlayScreen screen, MapObject object) {
-        super(screen.getWorld(), screen.getMap(), object);
+    public Brick(World world, MapObject object) {
+        super(world, object);
         fixture.setUserData(this);
         setCategoryFilter(Constants.BRICK_BIT);
     }

@@ -9,13 +9,11 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Enemy extends Sprite {
     protected final World world;
-    protected final PlayScreen screen;
     public Body b2body;
     public Vector2 velocity;
 
     public Enemy(PlayScreen screen, float x, float y) {
         this.world = screen.getWorld();
-        this.screen = screen;
         setPosition(x, y);
 
         defineEnemy();

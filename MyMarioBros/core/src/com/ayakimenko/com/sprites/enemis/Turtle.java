@@ -2,6 +2,7 @@ package com.ayakimenko.com.sprites.enemis;
 
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
+import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,8 +22,6 @@ public class Turtle extends Enemy {
     public State previousState;
     private float stateTime;
     private Animation walkAnimation;
-    private Array<TextureRegion> frames;
-    private boolean setToDestroy;
     private boolean destroyed;
     private TextureRegion shell;
     private float deadRotation;
@@ -30,10 +29,10 @@ public class Turtle extends Enemy {
     public Turtle(PlayScreen screen, float x, float y) {
         super(screen, x, y);
 
-        frames = new Array<TextureRegion>();
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("turtle"), 0, 0, 16, 24));
-        frames.add(new TextureRegion(screen.getAtlas().findRegion("turtle"), 16, 0, 16, 24));
-        shell = new TextureRegion(screen.getAtlas().findRegion("turtle"), 64, 0, 16, 24);
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(AssetLoader.atlas.findRegion("turtle"), 0, 0, 16, 24));
+        frames.add(new TextureRegion(AssetLoader.atlas.findRegion("turtle"), 16, 0, 16, 24));
+        shell = new TextureRegion(AssetLoader.atlas.findRegion("turtle"), 64, 0, 16, 24);
         deadRotation = 0;
         walkAnimation = new Animation(0.2f, frames);
         currentState = previousState = State.WALKING;

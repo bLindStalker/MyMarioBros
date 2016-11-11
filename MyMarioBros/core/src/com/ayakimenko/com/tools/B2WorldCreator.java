@@ -9,14 +9,14 @@ import com.ayakimenko.com.sprites.objects.Coin;
 import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+
+import static com.ayakimenko.com.tools.AssetLoader.tiledMap;
 
 public class B2WorldCreator {
     private Array<Goomba> goombas;
@@ -24,66 +24,65 @@ public class B2WorldCreator {
 
     public B2WorldCreator(PlayScreen screen) {
         World world = screen.getWorld();
-        TiledMap map = screen.getMap();
 
         BodyDef bodyDef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fixtureDef = new FixtureDef();
-        Body body;
 
-        for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / Constants.PPM, (rect.getY() + rect.getHeight() / 2) / Constants.PPM);
-
-            body = world.createBody(bodyDef);
+        //ground
+        for (MapObject object : tiledMap.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = getRectangle(object);
 
             shape.setAsBox(rect.getWidth() / 2 / Constants.PPM, rect.getHeight() / 2 / Constants.PPM);
             fixtureDef.shape = shape;
-            body.createFixture(fixtureDef);
+
+            makeFixture(world, bodyDef, fixtureDef, rect);
         }
 
         // create pipe
-        for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / Constants.PPM, (rect.getY() + rect.getHeight() / 2) / Constants.PPM);
-
-            body = world.createBody(bodyDef);
+        for (MapObject object : tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = getRectangle(object);
 
             shape.setAsBox(rect.getWidth() / 2 / Constants.PPM, rect.getHeight() / 2 / Constants.PPM);
             fixtureDef.shape = shape;
             fixtureDef.filter.categoryBits = Constants.OBJECT_BIT;
-            body.createFixture(fixtureDef);
+
+            makeFixture(world, bodyDef, fixtureDef, rect);
         }
 
         // create brigs
-
-        for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-            new Brick(screen, object);
+        for (MapObject object : tiledMap.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+            new Brick(world, object);
         }
 
         // create coins
-
-        for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-            new Coin(screen, object);
+        for (MapObject object : tiledMap.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+            new Coin(world, object);
         }
 
         // create goomgas
         goombas = new Array<Goomba>();
-        for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+        for (MapObject object : tiledMap.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = getRectangle(object);
             goombas.add(new Goomba(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
         }
 
         // create turtles
         turtles = new Array<Turtle>();
-        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+        for (MapObject object : tiledMap.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = getRectangle(object);
             turtles.add(new Turtle(screen, rect.getX() / Constants.PPM, rect.getY() / Constants.PPM));
         }
+    }
+
+    private Rectangle getRectangle(MapObject object) {
+        return ((RectangleMapObject) object).getRectangle();
+    }
+
+    private void makeFixture(World world, BodyDef bodyDef, FixtureDef fixtureDef, Rectangle rect) {
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / Constants.PPM, (rect.getY() + rect.getHeight() / 2) / Constants.PPM);
+        world.createBody(bodyDef).createFixture(fixtureDef);
     }
 
     public Array<Enemy> getEnemies() {

@@ -1,10 +1,8 @@
 package com.ayakimenko.com.sprites;
 
 import com.ayakimenko.com.tools.utils.Constants;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,15 +13,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import static com.ayakimenko.com.tools.AssetLoader.tiledMap;
+
 public abstract class InteractiveTileObject {
-    private TiledMap tiledMap;
     protected Body body;
     protected Fixture fixture;
     protected MapObject object;
 
-    public InteractiveTileObject(World world, TiledMap tiledMap, MapObject object) {
+    public InteractiveTileObject(World world, MapObject object) {
         this.object = object;
-        this.tiledMap = tiledMap;
 
         BodyDef bodyDef = new BodyDef();
         FixtureDef fixtureDef = new FixtureDef();

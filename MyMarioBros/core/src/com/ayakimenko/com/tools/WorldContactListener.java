@@ -17,7 +17,6 @@ public class WorldContactListener implements ContactListener {
         Fixture fiA = contact.getFixtureA();
         Fixture fiB = contact.getFixtureB();
 
-
         int cDef = fiA.getFilterData().categoryBits | fiB.getFilterData().categoryBits;
 
         switch (cDef) {

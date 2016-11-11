@@ -1,6 +1,5 @@
 package com.ayakimenko.com.sprites;
 
-import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.enemis.Enemy;
 import com.ayakimenko.com.sprites.enemis.Turtle;
 import com.ayakimenko.com.tools.AssetLoader;
@@ -23,9 +22,10 @@ import com.badlogic.gdx.utils.Array;
 
 public class Mario extends Sprite {
 
-    public State currentState;
+    public State currentState = State.STANDING;
+    private State previousState = State.STANDING;
+
     public Body b2body;
-    private State previusState;
     private World word;
     private TextureRegion marioStand;
     private Animation marioRun;
@@ -35,55 +35,59 @@ public class Mario extends Sprite {
     private TextureRegion bigMarioStand;
     private TextureRegion bigMarioJump;
     private TextureRegion marioDead;
-    private float stateTimer;
+    private float stateTimer = 0;
     private boolean timeToDefineMario;
-    private boolean runningRight;
+    private boolean runningRight = true;
     private boolean marioIsBig;
     private boolean runnGrowAnimation;
     private boolean timeToDefineBigMario;
     private boolean marioIsDead;
 
-    public Mario(PlayScreen playScreen) {
-        super(playScreen.getAtlas().findRegion("little_mario"));
-        this.word = playScreen.getWorld();
-        currentState = State.STANDING;
-        previusState = State.STANDING;
-        stateTimer = 0;
-        runningRight = true;
+    public Mario(World world) {
+        super(AssetLoader.atlas.findRegion("little_mario"));
+        this.word = world;
 
+
+        setMarioRunAnimation();
+        setBigMarioRunAnimation();
+        setGrowMarioAnimation();
+
+        bigMarioJump = new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), 80, 0, 16, 32);
+        marioJump = new TextureRegion(AssetLoader.atlas.findRegion("little_mario"), 80, 0, 16, 16);
+        marioStand = new TextureRegion(AssetLoader.atlas.findRegion("little_mario"), 0, 0, 16, 16);
+        bigMarioStand = new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), 0, 0, 16, 32);
+        marioDead = new TextureRegion(AssetLoader.atlas.findRegion("little_mario"), 97, 0, 16, 16);
+
+        setBounds(0, 0, 16 / Constants.PPM, 16 / Constants.PPM);
+        defineMario();
+    }
+
+    private void setGrowMarioAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        frames.add(new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), 240, 0, 16, 32));
+        frames.add(new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), 0, 0, 16, 32));
+        frames.add(new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), 240, 0, 16, 32));
+        frames.add(new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), 0, 0, 16, 32));
+
+        growMario = new Animation(0.2f, frames);
+    }
+
+    private void setBigMarioRunAnimation() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
         for (int i = 1; i < 4; i++) {
-            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("little_mario"), i * 16, 0, 16, 16));
-        }
-        marioRun = new Animation(0.1f, frames);
-        marioRun.setPlayMode(Animation.PlayMode.LOOP);
-        frames.clear();
-
-        for (int i = 1; i < 4; i++) {
-            frames.add(new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), i * 16, 0, 16, 32));
+            frames.add(new TextureRegion(AssetLoader.atlas.findRegion("big_mario"), i * 16, 0, 16, 32));
         }
         bigMarioRun = new Animation(0.1f, frames);
         bigMarioRun.setPlayMode(Animation.PlayMode.LOOP);
-        frames.clear();
+    }
 
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), 240, 0, 16, 32));
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), 0, 0, 16, 32));
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), 240, 0, 16, 32));
-        frames.add(new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), 0, 0, 16, 32));
-
-        growMario = new Animation(0.2f, frames);
-
-        marioJump = new TextureRegion(playScreen.getAtlas().findRegion("little_mario"), 80, 0, 16, 16);
-        bigMarioJump = new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), 80, 0, 16, 32);
-
-        defineMario();
-
-        marioStand = new TextureRegion(playScreen.getAtlas().findRegion("little_mario"), 0, 0, 16, 16);
-        bigMarioStand = new TextureRegion(playScreen.getAtlas().findRegion("big_mario"), 0, 0, 16, 32);
-        marioDead = new TextureRegion(playScreen.getAtlas().findRegion("little_mario"), 97, 0, 16, 16);
-
-        setBounds(0, 0, 16 / Constants.PPM, 16 / Constants.PPM);
-        setRegion(marioStand);
+    private void setMarioRunAnimation() {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i = 1; i < 4; i++) {
+            frames.add(new TextureRegion(AssetLoader.atlas.findRegion("little_mario"), i * 16, 0, 16, 16));
+        }
+        marioRun = new Animation(0.1f, frames);
+        marioRun.setPlayMode(Animation.PlayMode.LOOP);
     }
 
     public void update(float dt) {
@@ -173,8 +177,8 @@ public class Mario extends Sprite {
             runningRight = true;
         }
 
-        stateTimer = currentState == previusState ? stateTimer + dt : 0;
-        previusState = currentState;
+        stateTimer = currentState == previousState ? stateTimer + dt : 0;
+        previousState = currentState;
         return region;
     }
 
@@ -183,7 +187,7 @@ public class Mario extends Sprite {
             return State.DEAD;
         } else if (runnGrowAnimation) {
             return State.GROWING;
-        } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previusState == State.JUMPING)) {
+        } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
             return State.JUMPING;
         } else if (b2body.getLinearVelocity().y < 0) {
             return State.FALLING;
@@ -231,7 +235,7 @@ public class Mario extends Sprite {
         AssetLoader.manager.get("audio/sounds/powerup.wav", Sound.class).play();
     }
 
-    public void redefineMario() {
+    private void redefineMario() {
         Vector2 position = b2body.getPosition();
         word.destroyBody(b2body);
 

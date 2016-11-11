@@ -11,15 +11,13 @@ import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.B2WorldCreator;
 import com.ayakimenko.com.tools.WorldContactListener;
 import com.ayakimenko.com.tools.utils.Constants;
+import com.ayakimenko.com.tools.utils.SpawnObject;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -30,29 +28,24 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class PlayScreen implements Screen {
+public class PlayScreen extends ScreenAdapter {
 
     private MarioBros game;
-    private TextureAtlas atlas;
-
 
     private OrthographicCamera gameCam;
     private Viewport gameViewport;
     private MainStage mainStage;
 
-    private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
     //need for seen lines of objects.
-    private Box2DDebugRenderer b2dr;
+    private Box2DDebugRenderer b2dr = new Box2DDebugRenderer();
     //Box2d variables
     private World world;
-    private B2WorldCreator creator;
+    private B2WorldCreator worldCreator;
 
     private Mario player;
-
-    private Array<Item> items;
-    private LinkedBlockingQueue<ItemDef> itemToSpawn;
+    private Array<Item> items = new Array<Item>();
 
     public PlayScreen(MarioBros game) {
         this.game = game;
@@ -62,56 +55,25 @@ public class PlayScreen implements Screen {
         gameCam.position.set(gameViewport.getWorldWidth() / 2, gameViewport.getWorldHeight() / 2, 0);
 
         mainStage = new MainStage(game.getBatch());
-
-        atlas = new TextureAtlas("Mario_and_Enemies.pack");
-        map = new TmxMapLoader().load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / Constants.PPM);
+        renderer = new OrthogonalTiledMapRenderer(AssetLoader.tiledMap, 1 / Constants.PPM);
 
         world = new World(new Vector2(0, -10), true);
-        b2dr = new Box2DDebugRenderer();
-        creator = new B2WorldCreator(this);
+        worldCreator = new B2WorldCreator(this);
 
-        player = new Mario(this);
+        player = new Mario(world);
 
         world.setContactListener(new WorldContactListener());
-        Music music = AssetLoader.manager.get("audio/music/mario_music.ogg", Music.class);
-        music.setLooping(true);
-        music.setVolume(0.3f);
-        music.play();
 
-        items = new Array<Item>();
-        itemToSpawn = new LinkedBlockingQueue<ItemDef>();
-    }
-
-    public void spawnItem(ItemDef itemDef) {
-        itemToSpawn.add(itemDef);
-    }
-
-    public void handleSpawningItems() {
-        if (!itemToSpawn.isEmpty()) {
-            ItemDef itemDef = itemToSpawn.poll();
-            if (itemDef.type == Mushroom.class) {
-                items.add(new Mushroom(this, itemDef.position.x, itemDef.position.y));
-            }
-        }
-    }
-
-    public TextureAtlas getAtlas() {
-        return atlas;
-    }
-
-    @Override
-    public void show() {
-
+        initialiseMusic();
     }
 
     public void update(float dl) {
-        handleInput(dl);
+        handleInput();
         handleSpawningItems();
         world.step(1 / 60f, 6, 2);
 
         player.update(dl);
-        for (Enemy enemy : creator.getEnemies()) {
+        for (Enemy enemy : worldCreator.getEnemies()) {
             enemy.update(dl);
         }
 
@@ -129,21 +91,6 @@ public class PlayScreen implements Screen {
         renderer.setView(gameCam);
     }
 
-    private void handleInput(float dl) {
-        if (player.currentState != Mario.State.DEAD) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-                player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
-            }
-
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
-                player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-            }
-
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
-                player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
-            }
-        }
-    }
 
     @Override
     public void render(float delta) {
@@ -159,7 +106,7 @@ public class PlayScreen implements Screen {
 
         game.getBatch().begin();
         player.draw(game.getBatch());
-        for (Enemy enemy : creator.getEnemies()) {
+        for (Enemy enemy : worldCreator.getEnemies()) {
             enemy.draw(game.getBatch());
             if (enemy.getX() < player.getX() + 224 / Constants.PPM) {
                 enemy.b2body.setActive(true);
@@ -181,44 +128,57 @@ public class PlayScreen implements Screen {
         }
     }
 
+    public World getWorld() {
+        return world;
+    }
+
+    private boolean gameOver() {
+        return player.currentState == Mario.State.DEAD && player.getStateTimer() > 3;
+    }
+
     @Override
     public void resize(int width, int height) {
         gameViewport.update(width, height);
     }
 
-    public TiledMap getMap() {
-        return map;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public boolean gameOver() {
-        return player.currentState == Mario.State.DEAD && player.getStateTimer() > 3;
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
     @Override
     public void dispose() {
-        map.dispose();
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
         mainStage.dispose();
+    }
+
+    private void handleSpawningItems() {
+        LinkedBlockingQueue<ItemDef> itemToSpawn = SpawnObject.getItemToSpawn();
+        if (!itemToSpawn.isEmpty()) {
+            ItemDef itemDef = itemToSpawn.poll();
+            if (itemDef.type == Mushroom.class) {
+                items.add(new Mushroom(this, itemDef.position.x, itemDef.position.y));
+            }
+        }
+    }
+
+    private void handleInput() {
+        if (player.currentState != Mario.State.DEAD) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
+                player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
+                player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+            }
+        }
+    }
+
+    private void initialiseMusic() {
+        Music music = AssetLoader.manager.get("audio/music/mario_music.ogg", Music.class);
+        music.setLooping(true);
+        music.setVolume(0.3f);
+        music.play();
     }
 }
