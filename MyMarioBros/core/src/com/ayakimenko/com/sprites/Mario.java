@@ -27,14 +27,17 @@ public class Mario extends Sprite {
 
     public Body b2body;
     private World word;
-    private TextureRegion marioStand;
+
     private Animation marioRun;
     private Animation bigMarioRun;
     private Animation growMario;
+
+    private TextureRegion marioStand;
     private TextureRegion marioJump;
     private TextureRegion bigMarioStand;
     private TextureRegion bigMarioJump;
     private TextureRegion marioDead;
+
     private float stateTimer = 0;
     private boolean timeToDefineMario;
     private boolean runningRight = true;
@@ -248,6 +251,8 @@ public class Mario extends Sprite {
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
         shape.setRadius(6 / Constants.PPM);
+
+        fdef.shape = shape;
         fdef.filter.categoryBits = Constants.MARIO_BIT;
         fdef.filter.maskBits = Constants.GROUND_BIT
                 | Constants.COIN_BIT
@@ -257,17 +262,16 @@ public class Mario extends Sprite {
                 | Constants.ENEMY_HEAD_BIT
                 | Constants.ITEM_BIT;
 
-        fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
 
         EdgeShape head = new EdgeShape();
+
         head.set(new Vector2(-2 / Constants.PPM, 6 / Constants.PPM), new Vector2(2 / Constants.PPM, 6 / Constants.PPM));
-        fdef.filter.categoryBits = Constants.MARIO_HEAD_BIT;
         fdef.shape = head;
         fdef.isSensor = true;
+        fdef.filter.categoryBits = Constants.MARIO_HEAD_BIT;
 
         b2body.createFixture(fdef).setUserData(this);
-
         timeToDefineMario = false;
     }
 
@@ -300,10 +304,6 @@ public class Mario extends Sprite {
 
     public float getStateTimer() {
         return stateTimer;
-    }
-
-    public boolean isMarioIsDead() {
-        return marioIsDead;
     }
 
     public boolean isMarioIsBig() {

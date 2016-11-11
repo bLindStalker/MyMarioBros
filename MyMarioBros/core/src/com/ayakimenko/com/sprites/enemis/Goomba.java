@@ -18,14 +18,13 @@ import com.badlogic.gdx.utils.Array;
 public class Goomba extends Enemy {
     private float stateTime;
     private Animation walkAnimation;
-    private Array<TextureRegion> frames;
     private boolean setToDestroy;
     private boolean destroyed;
 
 
     public Goomba(PlayScreen screen, float x, float y) {
         super(screen, x, y);
-        frames = new Array<TextureRegion>();
+        Array<TextureRegion> frames = new Array<TextureRegion>();
         for (int i = 0; i < 2; i++) {
             frames.add(new TextureRegion(AssetLoader.atlas.findRegion("goomba"), i * 16, 0, 16, 16));
         }

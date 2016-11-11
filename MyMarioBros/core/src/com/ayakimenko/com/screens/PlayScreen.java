@@ -44,7 +44,7 @@ public class PlayScreen extends ScreenAdapter {
     private World world;
     private B2WorldCreator worldCreator;
 
-    private Mario player;
+    private Mario mario;
     private Array<Item> items = new Array<Item>();
 
     public PlayScreen(MarioBros game) {
@@ -60,7 +60,7 @@ public class PlayScreen extends ScreenAdapter {
         world = new World(new Vector2(0, -10), true);
         worldCreator = new B2WorldCreator(this);
 
-        player = new Mario(world);
+        mario = new Mario(world);
 
         world.setContactListener(new WorldContactListener());
 
@@ -70,9 +70,9 @@ public class PlayScreen extends ScreenAdapter {
     public void update(float dl) {
         handleInput();
         handleSpawningItems();
-        world.step(1 / 60f, 6, 2);
+        world.step(1 / 60f, 6, 2); //-???
 
-        player.update(dl);
+        mario.update(dl);
         for (Enemy enemy : worldCreator.getEnemies()) {
             enemy.update(dl);
         }
@@ -83,8 +83,8 @@ public class PlayScreen extends ScreenAdapter {
 
         mainStage.update(dl);
 
-        if (player.currentState != Mario.State.DEAD) {
-            gameCam.position.x = player.b2body.getPosition().x;
+        if (mario.currentState != Mario.State.DEAD) {
+            gameCam.position.x = mario.b2body.getPosition().x;
         }
 
         gameCam.update();
@@ -105,10 +105,10 @@ public class PlayScreen extends ScreenAdapter {
         game.getBatch().setProjectionMatrix(gameCam.combined);
 
         game.getBatch().begin();
-        player.draw(game.getBatch());
+        mario.draw(game.getBatch());
         for (Enemy enemy : worldCreator.getEnemies()) {
             enemy.draw(game.getBatch());
-            if (enemy.getX() < player.getX() + 224 / Constants.PPM) {
+            if (enemy.getX() < mario.getX() + 224 / Constants.PPM) {
                 enemy.b2body.setActive(true);
             }
         }
@@ -133,7 +133,7 @@ public class PlayScreen extends ScreenAdapter {
     }
 
     private boolean gameOver() {
-        return player.currentState == Mario.State.DEAD && player.getStateTimer() > 3;
+        return mario.currentState == Mario.State.DEAD && mario.getStateTimer() > 3;
     }
 
     @Override
@@ -154,25 +154,29 @@ public class PlayScreen extends ScreenAdapter {
         if (!itemToSpawn.isEmpty()) {
             ItemDef itemDef = itemToSpawn.poll();
             if (itemDef.type == Mushroom.class) {
-                items.add(new Mushroom(this, itemDef.position.x, itemDef.position.y));
+                items.add(new Mushroom(world, itemDef.position.x, itemDef.position.y));
             }
         }
     }
 
     private void handleInput() {
-        if (player.currentState != Mario.State.DEAD) {
+        if (mario.currentState != Mario.State.DEAD) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-                player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
+                setImpulse(0, 4f);
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2) {
-                player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && mario.b2body.getLinearVelocity().x <= 2) {
+                setImpulse(0.1f, 0);
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2) {
-                player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && mario.b2body.getLinearVelocity().x >= -2) {
+                setImpulse(-0.1f, 0);
             }
         }
+    }
+
+    private void setImpulse(float x, float y) {
+        mario.b2body.applyLinearImpulse(new Vector2(x, y), mario.b2body.getWorldCenter(), true);
     }
 
     private void initialiseMusic() {

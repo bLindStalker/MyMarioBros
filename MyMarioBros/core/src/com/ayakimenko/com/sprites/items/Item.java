@@ -1,6 +1,5 @@
 package com.ayakimenko.com.sprites.items;
 
-import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.Mario;
 import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -14,21 +13,19 @@ import com.badlogic.gdx.physics.box2d.World;
  */
 
 public abstract class Item extends Sprite {
-    protected PlayScreen screen;
     protected World world;
     protected Vector2 velocity;
     protected boolean toDestroy;
     protected boolean destroyed;
     protected Body body;
 
-    public Item(PlayScreen screen, float x, float y) {
-        this.screen = screen;
-        this.world = screen.getWorld();
+    public Item(World world, float x, float y) {
+        this.world = world;
         toDestroy = false;
         destroyed = false;
 
         setPosition(x, y);
-        setBounds(getX(), getY(), 16 / Constants.PPM, 16 / Constants.PPM);
+        setBounds(getX(), getY(), 16 / Constants.PPM, 16 / Constants.PPM); //-???
         defineItem();
     }
 
