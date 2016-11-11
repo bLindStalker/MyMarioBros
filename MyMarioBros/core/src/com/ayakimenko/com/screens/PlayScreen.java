@@ -1,7 +1,7 @@
 package com.ayakimenko.com.screens;
 
 import com.ayakimenko.com.MarioBros;
-import com.ayakimenko.com.scenes.Hud;
+import com.ayakimenko.com.scenes.MainStage;
 import com.ayakimenko.com.sprites.Mario;
 import com.ayakimenko.com.sprites.enemis.Enemy;
 import com.ayakimenko.com.sprites.items.Item;
@@ -9,8 +9,8 @@ import com.ayakimenko.com.sprites.items.ItemDef;
 import com.ayakimenko.com.sprites.items.Mushroom;
 import com.ayakimenko.com.tools.AssetLoader;
 import com.ayakimenko.com.tools.B2WorldCreator;
-import com.ayakimenko.com.tools.utils.Constants;
 import com.ayakimenko.com.tools.WorldContactListener;
+import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -38,21 +38,18 @@ public class PlayScreen implements Screen {
 
     private OrthographicCamera gameCam;
     private Viewport gameViewport;
-    private Hud hud;
+    private MainStage mainStage;
 
-    // tiled map variables
-    private TmxMapLoader mapLoader;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
+    //need for seen lines of objects.
+    private Box2DDebugRenderer b2dr;
     //Box2d variables
     private World world;
-    private Box2DDebugRenderer b2dr;
     private B2WorldCreator creator;
 
     private Mario player;
-
-    private Music music;
 
     private Array<Item> items;
     private LinkedBlockingQueue<ItemDef> itemToSpawn;
@@ -60,28 +57,24 @@ public class PlayScreen implements Screen {
     public PlayScreen(MarioBros game) {
         this.game = game;
 
-        atlas = new TextureAtlas("Mario_and_Enemies.pack");
-
         gameCam = new OrthographicCamera();
         gameViewport = new FitViewport(Constants.V_WIDTH / Constants.PPM, Constants.V_HEIGHT / Constants.PPM, gameCam);
-
-        hud = new Hud(game.getBatch());
-
-        mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / Constants.PPM);
         gameCam.position.set(gameViewport.getWorldWidth() / 2, gameViewport.getWorldHeight() / 2, 0);
 
+        mainStage = new MainStage(game.getBatch());
+
+        atlas = new TextureAtlas("Mario_and_Enemies.pack");
+        map = new TmxMapLoader().load("level1.tmx");
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / Constants.PPM);
+
         world = new World(new Vector2(0, -10), true);
-
         b2dr = new Box2DDebugRenderer();
-
         creator = new B2WorldCreator(this);
 
         player = new Mario(this);
 
         world.setContactListener(new WorldContactListener());
-        music = AssetLoader.manager.get("audio/music/mario_music.ogg", Music.class);
+        Music music = AssetLoader.manager.get("audio/music/mario_music.ogg", Music.class);
         music.setLooping(true);
         music.setVolume(0.3f);
         music.play();
@@ -126,7 +119,7 @@ public class PlayScreen implements Screen {
             item.update(dl);
         }
 
-        hud.update(dl);
+        mainStage.update(dl);
 
         if (player.currentState != Mario.State.DEAD) {
             gameCam.position.x = player.b2body.getPosition().x;
@@ -179,8 +172,8 @@ public class PlayScreen implements Screen {
 
         game.getBatch().end();
 
-        game.getBatch().setProjectionMatrix(hud.stage.getCamera().combined);
-        hud.stage.draw();
+        game.getBatch().setProjectionMatrix(mainStage.stage.getCamera().combined);
+        mainStage.stage.draw();
 
         if (gameOver()) {
             game.setScreen(new GameOverScreen(game));
@@ -226,6 +219,6 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
-        hud.dispose();
+        mainStage.dispose();
     }
 }

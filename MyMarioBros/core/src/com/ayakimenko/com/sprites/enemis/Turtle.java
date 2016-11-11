@@ -26,6 +26,7 @@ public class Turtle extends Enemy {
     private boolean destroyed;
     private TextureRegion shell;
     private float deadRotation;
+
     public Turtle(PlayScreen screen, float x, float y) {
         super(screen, x, y);
 

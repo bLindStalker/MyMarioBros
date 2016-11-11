@@ -1,6 +1,5 @@
 package com.ayakimenko.com.sprites;
 
-import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.enemis.Enemy;
 import com.ayakimenko.com.sprites.enemis.Turtle;
@@ -43,6 +42,7 @@ public class Mario extends Sprite {
     private boolean runnGrowAnimation;
     private boolean timeToDefineBigMario;
     private boolean marioIsDead;
+
     public Mario(PlayScreen playScreen) {
         super(playScreen.getAtlas().findRegion("little_mario"));
         this.word = playScreen.getWorld();

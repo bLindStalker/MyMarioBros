@@ -1,6 +1,5 @@
 package com.ayakimenko.com.sprites.objects;
 
-import com.ayakimenko.com.MarioBros;
 import com.ayakimenko.com.screens.PlayScreen;
 import com.ayakimenko.com.sprites.InteractiveTileObject;
 import com.ayakimenko.com.sprites.Mario;
@@ -13,15 +12,17 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 
-import static com.ayakimenko.com.scenes.Hud.addScore;
+import static com.ayakimenko.com.scenes.MainStage.addScore;
 
 public class Coin extends InteractiveTileObject {
     private static TiledMapTileSet tileSet;
     private final int BLACK_COIN = 28;
+    private PlayScreen screen;
 
     public Coin(PlayScreen screen, MapObject object) {
-        super(screen, object);
-        tileSet = map.getTileSets().getTileSet("tileset_gutter");
+        super(screen.getWorld(), screen.getMap(), object);
+        this.screen = screen;
+        tileSet = screen.getMap().getTileSets().getTileSet("tileset_gutter");
 
         fixture.setUserData(this);
         setCategoryFilter(Constants.COIN_BIT);

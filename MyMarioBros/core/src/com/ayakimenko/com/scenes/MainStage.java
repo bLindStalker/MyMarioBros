@@ -1,6 +1,5 @@
 package com.ayakimenko.com.scenes;
 
-import com.ayakimenko.com.tools.utils.Constants;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -12,43 +11,46 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class Hud implements Disposable {
+import static com.ayakimenko.com.tools.utils.Constants.V_HEIGHT;
+import static com.ayakimenko.com.tools.utils.Constants.V_WIDTH;
+
+public class MainStage implements Disposable {
     private static Label scoreLabel;
-    private static Integer score;
+    private static Integer score = 0;
 
     public Stage stage;
 
     private Label countDownLabel;
-    private Integer worldTimer;
-    private float timeCount;
+    private Integer worldTimer = 300;
+    private float timeCount = 0;
 
-    public Hud(SpriteBatch sb) {
-        worldTimer = 300;
-        timeCount = 0;
-        score = 0;
+    public MainStage(SpriteBatch sb) {
 
-        Viewport viewport = new FillViewport(Constants.V_WIDTH, Constants.V_HEIGHT, new OrthographicCamera());
+        Viewport viewport = new FillViewport(V_WIDTH, V_HEIGHT);
         stage = new Stage(viewport, sb);
 
         Table table = new Table();
         table.top();
         table.setFillParent(true);
 
-        countDownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
-        Label timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label worldLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label marioLabel = new Label("MARIO", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
+        Label.LabelStyle style = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+        Label marioLabel = new Label("MARIO", style);
         table.add(marioLabel).expandX().padTop(10);
+
+        Label worldLabel = new Label("WORLD", style);
         table.add(worldLabel).expandX().padTop(10);
+
+        Label timeLabel = new Label("TIME", style);
         table.add(timeLabel).expandX().padTop(10);
 
         table.row();
+        scoreLabel = new Label(score.toString(), style);
         table.add(scoreLabel).expandX();
+
+        Label levelLabel = new Label("1-1", style);
         table.add(levelLabel).expandX();
+
+        countDownLabel = new Label(worldTimer.toString(), style);
         table.add(countDownLabel).expandX();
 
         stage.addActor(table);
@@ -56,14 +58,14 @@ public class Hud implements Disposable {
 
     public static void addScore(int value) {
         score += value;
-        scoreLabel.setText(String.format("%06d", score));
+        scoreLabel.setText(score.toString());
     }
 
     public void update(float dl) {
         timeCount += dl;
         if (timeCount >= 1) {
             worldTimer--;
-            countDownLabel.setText(String.format("%03d", worldTimer));
+            countDownLabel.setText(worldTimer.toString());
             timeCount = 0;
         }
     }
